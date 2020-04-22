@@ -1,4 +1,5 @@
-﻿using OrderPoc.Bll.Interfaces;
+﻿using System.Linq;
+using OrderPoc.Bll.Interfaces;
 using OrderPoc.Bll.Model;
 
 namespace OrderPoc.Bll.Implementations
@@ -7,12 +8,7 @@ namespace OrderPoc.Bll.Implementations
     {
         public decimal GetTotalCost(Order order)
         {
-            decimal cost = 0;
-            foreach (var item in order.Items)
-            {
-                cost += item.Product.Price * item.Quantity;
-            }
-            return cost;
+            return order.Items.Sum(item => item.Product.Price * item.Quantity);
         }
     }
 }

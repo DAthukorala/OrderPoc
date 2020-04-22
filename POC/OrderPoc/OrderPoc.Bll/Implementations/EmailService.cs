@@ -5,8 +5,9 @@ namespace OrderPoc.Bll.Implementations
 {
     public abstract class EmailService : ICommunicationService
     {
-        private MessageService _messageService;
-        public EmailService(MessageService messageService)
+        private readonly MessageService _messageService;
+
+        protected EmailService(MessageService messageService)
         {
             _messageService = messageService;
         }

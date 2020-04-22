@@ -23,24 +23,16 @@ namespace OrderPoc.Bll.Implementations
 
         public bool Checkout(Order order)
         {
-            var isOrderPlaced = false;
             var unavailableItems = order.Items.Where(x => !_productService.CheckInventory(x.Product.Id, x.Quantity));
-            if (unavailableItems.Count() == 0)
-            {
-                var cardNumber = order.Customer.CreditCardNumber;
-                var isValidCreditCard = _cardService.ValidateNumber(cardNumber);
-                if (isValidCreditCard)
-                {
-                    var cost = _orderService.GetTotalCost(order);
-                    var isCharged = _gatewayService.ChargePayment(cardNumber, cost);
-                    if (isCharged)
-                    {
-                        var isEmailSent = _emailService.SendInformation(order);
-                        isOrderPlaced = isEmailSent;
-                    }
-                }
-            }
-            return isOrderPlaced;
+            if (unavailableItems.Count() != 0) return false;
+            var cardNumber = order.Customer.CreditCardNumber;
+            var isValidCreditCard = _cardService.ValidateNumber(cardNumber);
+            if (!isValidCreditCard) return false;
+            var cost = _orderService.GetTotalCost(order);
+            var isCharged = _gatewayService.ChargePayment(cardNumber, cost);
+            if (!isCharged) return false;
+            var isEmailSent = _emailService.SendInformation(order);
+            return isEmailSent;
         }
     }
 }
